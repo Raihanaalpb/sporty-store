@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catalogue</title>
+  <style>
+    body{margin:0;font-family:Arial, Helvetica, sans-serif;background:#f6f6f6;color:#222}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    h1{margin:0 0 10px;font-size:26px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+    .pill{background:#fff;border:1px solid #ddd;border-radius:999px;padding:8px 12px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-top:18px}
+    .card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px}
+    .image-frame{height:180px;width:100%;border-radius:8px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
+    .image-frame img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+    .label{margin-top:10px;font-weight:800;text-align:center}
+    .meta{margin-top:8px;font-size:14px;text-align:center;color:#444}
+    .actions{display:flex;gap:10px;margin-top:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+    select, button{font:inherit}
+    select{padding:8px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;min-width:110px}
+    button{padding:9px 12px;border-radius:8px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;font-weight:800}
+    button:active{transform:translateY(1px)}
+    .secondary{background:#fff;color:#111}
+    .linklike{cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Catalogue</h1>
+      <div class="pill">
+        🛒 <span id="cartCount">0 articles</span>
+        <button type="button" class="secondary linklike" id="goCartBtn" style="margin-left:10px;">
+          Voir panier
+        </button>
+      </div>
+    </div>
+
+    <div class="grid" id="productGrid"></div>
+  </div>
+
+  <script>
+    // ====== CONFIG PRODUITS (Option A) ======
+    const PRODUCTS = Array.from({ length: 60 }, (_, i) => {
+      const n = String(i + 1).padStart(2, '0');
+      return {
+        id: n,
+        title: "Yoga " + n,
+        imageUrl: "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/alo/alo_yoga_" + n + ".jpg"
+      };
+    });
+
+    const SIZES = ["S", "M", "L", "XL"];
+
+    // ====== LOCAL STORAGE PANIER ======
+    const CART_KEY = "cart_items_v1";
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function cartCount(cart) {
+      return Object.values(cart).reduce((sum, item) => sum + (item.qty || 1), 0);
+    }
+
+    function cartCountText() {
+      document.getElementById("cartCount").textContent = cartCount(loadCart()) + " articles";
+    }
+
+    function makeCartKey(productId, size) {
+      return productId + "::" + size;
+    }
+
+    function addToCart(product, size) {
+      const cart = loadCart();
+      const key = makeCartKey(product.id, size);
+
+      if (!cart[key]) {
+        cart[key] = {
+          productId: product.id,
+          title: product.title,
+          imageUrl: product.imageUrl,
+          size,
+          qty: 1
+        };
+      } else {
+        cart[key].qty += 1;
+      }
+
+      saveCart(cart);
+      cartCountText();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      PRODUCTS.forEach((p) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <div class="image-frame">
+            <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'">
+          </div>
+          <div class="label">${p.title}</div>
+          <div class="meta">Choisissez une taille</div>
+
+          <div class="actions">
+            <select data-product-size>
+              ${SIZES.map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+            <button type="button" data-add>Ajouter au panier</button>
+          </div>
+        `;
+
+        const select = card.querySelector("[data-product-size]");
+        const btn = card.querySelector("[data-add]");
+
+        btn.addEventListener("click", () => {
+          addToCart(p, select.value);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    document.getElementById("goCartBtn").addEventListener("click", () => {
+      window.location.href = "panier.html";
+    });
+
+    renderProducts();
+    cartCountText();
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panier</title>
+  <style>
+    body{margin:0;font-family:Arial, Helvetica, sans-serif;background:#f6f6f6;color:#222}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+    .pill{background:#fff;border:1px solid #ddd;border-radius:999px;padding:8px 12px;font-weight:800}
+    .cart{margin-top:10px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px}
+    .cart-items{display:flex;flex-direction:column;gap:10px}
+    .cart-item{border:1px solid #eee;border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+    .cart-left{min-width:240px}
+    .cart-title{font-weight:900;margin-bottom:4px}
+    .cart-sub{font-size:13px;color:#444}
+    .qty{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .qty input{width:90px;padding:8px 10px;border-radius:8px;border:1px solid #ccc}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;font-weight:900}
+    .secondary{background:#fff;color:#111}
+    .danger{background:#fff;color:#b00020;border-color:#b00020}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:12px}
+    .small{font-size:13px;color:#444}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="pill">🛒 Votre panier</div>
+      <button type="button" class="secondary" id="backBtn">← Retour catalogue</button>
+    </div>
+
+    <div class="cart">
+      <div class="cart-items" id="cartItems"></div>
+
+      <div class="actions">
+        <div class="small" id="emptyMsg" style="display:none;">Votre panier est vide.</div>
+        <button type="button" class="secondary" id="clearCartBtn">Vider</button>
+        <button type="button" id="whatsAppBtn">Envoyer sur WhatsApp</button>
+      </div>
+
+      <div class="small" style="margin-top:10px;">
+        Message : produit + taille + quantité.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CART_KEY = "cart_items_v1";
+
+    // WhatsApp (international) - fourni par toi
+    const WHATSAPP_NUMBER = "33782216309";
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function makeCartKey(productId, size) {
+      return productId + "::" + size;
+    }
+
+    function buildWhatsappText(itemsArr) {
+      const lines = [];
+      lines.push("Bonjour 👋 Je souhaite commander :");
+      lines.push("");
+
+      itemsArr.forEach((it) => {
+        lines.push(`- ${it.title} | Taille: ${it.size} | Quantité: ${it.qty}`);
+      });
+
+      lines.push("");
+      lines.push("Merci !");
+      return lines.join("\n");
+    }
+
+    function openWhatsapp(text) {
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+    }
+
+    function renderCart() {
+      const cart = loadCart();
+      const itemsDiv = document.getElementById("cartItems");
+      const emptyMsg = document.getElementById("emptyMsg");
+
+      const entries = Object.values(cart);
+      itemsDiv.innerHTML = "";
+
+      if (entries.length === 0) {
+        emptyMsg.style.display = "block";
+        return;
+      }
+      emptyMsg.style.display = "none";
+
+      entries.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+
+        row.innerHTML = `
+          <div class="cart-left">
+            <div class="cart-title">${item.title}</div>
+            <div class="cart-sub">Taille : <b>${item.size}</b></div>
+          </div>
+
+          <div class="qty">
+            <span class="small" style="font-weight:900;">Qté</span>
+            <input type="number" min="1" value="${item.qty}" data-qty />
+            <button type="button" class="danger" data-remove>Supprimer</button>
+          </div>
+        `;
+
+        const qtyInput = row.querySelector("[data-qty]");
+        const removeBtn = row.querySelector("[data-remove]");
+
+        qtyInput.addEventListener("change", () => {
+          const v = Math.max(1, parseInt(qtyInput.value || "1", 10));
+          const key = makeCartKey(item.productId, item.size);
+          cart[key].qty = v;
+          saveCart(cart);
+          renderCart();
+        });
+
+        removeBtn.addEventListener("click", () => {
+          const key = makeCartKey(item.productId, item.size);
+          delete cart[key];
+          saveCart(cart);
+          renderCart();
+        });
+
+        itemsDiv.appendChild(row);
+      });
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.href = "catalogue.html";
+    });
+
+    document.getElementById("clearCartBtn").addEventListener("click", () => {
+      localStorage.removeItem(CART_KEY);
+      renderCart();
+    });
+
+    document.getElementById("whatsAppBtn").addEventListener("click", () => {
+      const cart = loadCart();
+      const itemsArr = Object.values(cart);
+
+      if (itemsArr.length === 0) {
+        alert("Votre panier est vide.");
+        return;
+      }
+
+      const text = buildWhatsappText(itemsArr);
+      openWhatsapp(text);
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>
