@@ -3,55 +3,435 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Catalogue</title>
+  <title>Sporty Store — Catalogue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;font-family:Arial, Helvetica, sans-serif;background:#f6f6f6;color:#222}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    h1{margin:0 0 10px;font-size:26px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-    .pill{background:#fff;border:1px solid #ddd;border-radius:999px;padding:8px 12px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-top:18px}
-    .card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px}
-    .image-frame{height:180px;width:100%;border-radius:8px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-    .image-frame img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
-    .label{margin-top:10px;font-weight:800;text-align:center}
-    .meta{margin-top:8px;font-size:14px;text-align:center;color:#444}
-    .actions{display:flex;gap:10px;margin-top:10px;align-items:center;justify-content:center;flex-wrap:wrap}
-    select, button{font:inherit}
-    select{padding:8px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;min-width:110px}
-    button{padding:9px 12px;border-radius:8px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;font-weight:800}
-    button:active{transform:translateY(1px)}
-    .secondary{background:#fff;color:#111}
-    .linklike{cursor:pointer}
+    :root{
+      --ink:#1B1F1D;
+      --paper:#F1EFE4;
+      --moss:#3F5B45;
+      --moss-dark:#2C4230;
+      --citrus:#E8A33D;
+      --chalk:#8B8F87;
+      --card:#FFFFFF;
+      --radius:14px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .display{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      letter-spacing:0.03em;
+    }
+
+    /* ===== Header ===== */
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:var(--paper);
+      border-bottom:1px solid rgba(27,31,29,0.12);
+    }
+
+    .lane-stripe{
+      height:4px;
+      background:linear-gradient(90deg, var(--moss) 0%, var(--citrus) 50%, var(--moss) 100%);
+    }
+
+    .topbar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:18px 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      font-size:32px;
+      line-height:1;
+      color:var(--ink);
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+    }
+
+    .brand span.sub{
+      font-family:'Inter', system-ui, sans-serif;
+      font-size:12px;
+      letter-spacing:0.12em;
+      color:var(--moss);
+      font-weight:600;
+      text-transform:uppercase;
+    }
+
+    .cart-pill{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:var(--ink);
+      border-radius:999px;
+      padding:6px 8px 6px 18px;
+    }
+
+    .cart-pill .count-label{
+      color:var(--paper);
+      font-size:13px;
+      font-weight:500;
+      letter-spacing:0.02em;
+    }
+
+    .cart-pill .score{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      background:var(--citrus);
+      color:var(--ink);
+      min-width:34px;
+      height:34px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+    }
+
+    .cart-pill button{
+      background:var(--paper);
+      color:var(--ink);
+      border:none;
+      padding:9px 16px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      transition:transform .15s ease, background .15s ease;
+    }
+    .cart-pill button:hover{ background:#fff; transform:translateY(-1px); }
+    .cart-pill button:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    /* ===== Layout ===== */
+    .wrap{ max-width:1180px; margin:0 auto; padding:32px 24px 64px; }
+
+    .intro{
+      max-width:520px;
+      margin-bottom:22px;
+    }
+    .intro h2{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      font-size:22px;
+      letter-spacing:0.04em;
+      margin:0 0 6px;
+      color:var(--moss-dark);
+    }
+    .intro p{
+      margin:0;
+      color:var(--chalk);
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    /* ===== Filtres catégories ===== */
+    .filters{
+      margin-bottom:26px;
+    }
+
+    .gender-row{
+      display:flex;
+      gap:8px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .gender-btn{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      font-size:16px;
+      letter-spacing:0.03em;
+      background:transparent;
+      border:1px solid rgba(27,31,29,0.18);
+      color:var(--ink);
+      padding:9px 20px;
+      border-radius:999px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .gender-btn:hover{ border-color:var(--moss); }
+    .gender-btn.active{
+      background:var(--ink);
+      border-color:var(--ink);
+      color:var(--paper);
+    }
+    .gender-btn:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    .sub-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .sub-chip{
+      font-family:'Inter', system-ui, sans-serif;
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:0.02em;
+      background:rgba(63,91,69,0.08);
+      border:1px solid transparent;
+      color:var(--moss-dark);
+      padding:8px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .sub-chip:hover{ background:rgba(63,91,69,0.16); }
+    .sub-chip.active{
+      background:var(--citrus);
+      color:var(--ink);
+      font-weight:700;
+    }
+    .sub-chip:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    .result-count{
+      margin-top:14px;
+      font-size:12px;
+      color:var(--chalk);
+      letter-spacing:0.03em;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+      gap:20px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:14px;
+      transition:transform .18s ease, box-shadow .18s ease;
+      border:1px solid rgba(27,31,29,0.06);
+    }
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 14px 24px -12px rgba(27,31,29,0.22);
+    }
+
+    .image-frame{
+      height:190px;
+      width:100%;
+      border-radius:10px;
+      overflow:hidden;
+      background:var(--paper);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .image-frame img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      transition:transform .3s ease;
+    }
+    .card:hover .image-frame img{ transform:scale(1.05); }
+
+    .label{
+      margin-top:12px;
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      font-size:19px;
+      letter-spacing:0.03em;
+      text-align:left;
+      color:var(--ink);
+    }
+    .tag{
+      display:inline-block;
+      margin-top:2px;
+      font-size:11px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--moss);
+      font-weight:600;
+    }
+    .price{
+      margin-top:6px;
+      font-weight:700;
+      font-size:15px;
+      color:var(--ink);
+    }
+
+    .size-row{
+      display:flex;
+      gap:6px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    .size-pill{
+      border:1px solid rgba(27,31,29,0.18);
+      background:transparent;
+      color:var(--ink);
+      font-family:'Inter', system-ui, sans-serif;
+      font-weight:600;
+      font-size:12px;
+      padding:7px 0;
+      width:38px;
+      border-radius:999px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .size-pill:hover{ border-color:var(--moss); }
+    .size-pill.active{
+      background:var(--moss);
+      border-color:var(--moss);
+      color:#fff;
+    }
+    .size-pill:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    .add-btn{
+      margin-top:12px;
+      width:100%;
+      background:var(--citrus);
+      color:var(--ink);
+      border:none;
+      padding:11px 12px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      cursor:pointer;
+      transition:background .15s ease, transform .15s ease;
+    }
+    .add-btn:hover{ background:#f0ad4f; transform:translateY(-1px); }
+    .add-btn:active{ transform:translateY(0); }
+    .add-btn.added{ background:var(--moss); color:#fff; }
+
+    @media (prefers-reduced-motion: reduce){
+      .card, .card:hover, .image-frame img, .card:hover .image-frame img, .add-btn, .cart-pill button{
+        transition:none !important;
+        transform:none !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <header>
+    <div class="lane-stripe"></div>
     <div class="topbar">
-      <h1>Catalogue</h1>
-      <div class="pill">
-        🛒 <span id="cartCount">0 articles</span>
-        <button type="button" class="secondary linklike" id="goCartBtn" style="margin-left:10px;">
-          Voir panier
-        </button>
+      <div class="brand display">SPORTY <span style="color:var(--moss)">STORE</span><span class="sub">&nbsp;Yoga &amp; Active</span></div>
+      <div class="cart-pill">
+        <span class="count-label">Panier</span>
+        <span class="score" id="cartCount">0</span>
+        <button type="button" id="goCartBtn">Voir panier</button>
       </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="intro">
+      <h2>Le catalogue</h2>
+      <p>Choisis une taille, ajoute au panier, on prépare la commande sur WhatsApp — simple et rapide.</p>
+    </div>
+
+    <div class="filters">
+      <div class="gender-row" id="genderRow"></div>
+      <div class="sub-row" id="subRow"></div>
+      <div class="result-count" id="resultCount"></div>
     </div>
 
     <div class="grid" id="productGrid"></div>
   </div>
 
   <script>
-    // ====== CONFIG PRODUITS (Option A) ======
+    // ====== CONFIG CATÉGORIES ======
+    const CATEGORIES = {
+      homme: { label: "Homme", subs: ["Survêtement", "Jean"] },
+      femme: { label: "Femme", subs: ["Robe", "Ensemble sport"] }
+    };
+
+    // Poids indicatif par sous-catégorie (en grammes), sert au calcul de livraison
+    const SUB_WEIGHTS = {
+      "Survêtement": 500,
+      "Jean": 600,
+      "Robe": 100,
+      "Ensemble sport": 400
+    };
+
+    // ====== CONFIG PRODUITS (catégories + prix réparties aléatoirement pour l'aperçu) ======
+    const ALL_GENDERS = Object.keys(CATEGORIES);
+
     const PRODUCTS = Array.from({ length: 60 }, (_, i) => {
       const n = String(i + 1).padStart(2, '0');
+      const gender = ALL_GENDERS[Math.floor(Math.random() * ALL_GENDERS.length)];
+      const subs = CATEGORIES[gender].subs;
+      const sub = subs[Math.floor(Math.random() * subs.length)];
+      const price = Math.floor(Math.random() * (89 - 19 + 1)) + 19;
       return {
         id: n,
-        title: "Yoga " + n,
+        title: sub + " " + n,
+        gender,
+        sub,
+        price,
+        weightGrams: SUB_WEIGHTS[sub],
         imageUrl: "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/alo/alo_yoga_" + n + ".jpg"
       };
     });
 
     const SIZES = ["S", "M", "L", "XL"];
+
+    function formatEUR(n) {
+      return Number(n).toFixed(2).replace(".", ",");
+    }
+
+    // ====== ÉTAT DES FILTRES ======
+    let activeGender = "all";
+    let activeSub = "all";
+
+    function currentSubList() {
+      if (activeGender === "all") {
+        return Object.values(CATEGORIES).flatMap(c => c.subs);
+      }
+      return CATEGORIES[activeGender].subs;
+    }
+
+    function renderFilters() {
+      const genderRow = document.getElementById("genderRow");
+      const subRow = document.getElementById("subRow");
+
+      const genderOptions = [{ key: "all", label: "Tout" }, ...ALL_GENDERS.map(g => ({ key: g, label: CATEGORIES[g].label }))];
+
+      genderRow.innerHTML = genderOptions.map(g => `
+        <button type="button" class="gender-btn ${activeGender === g.key ? 'active' : ''}" data-gender="${g.key}">${g.label}</button>
+      `).join("");
+
+      genderRow.querySelectorAll("[data-gender]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeGender = btn.getAttribute("data-gender");
+          activeSub = "all";
+          renderFilters();
+          renderProducts();
+        });
+      });
+
+      const subs = ["all", ...currentSubList()];
+      subRow.innerHTML = subs.map(s => `
+        <button type="button" class="sub-chip ${activeSub === s ? 'active' : ''}" data-sub="${s}">${s === "all" ? "Toutes" : s}</button>
+      `).join("");
+
+      subRow.querySelectorAll("[data-sub]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeSub = btn.getAttribute("data-sub");
+          renderFilters();
+          renderProducts();
+        });
+      });
+    }
 
     // ====== LOCAL STORAGE PANIER ======
     const CART_KEY = "cart_items_v1";
@@ -72,7 +452,7 @@
     }
 
     function cartCountText() {
-      document.getElementById("cartCount").textContent = cartCount(loadCart()) + " articles";
+      document.getElementById("cartCount").textContent = cartCount(loadCart());
     }
 
     function makeCartKey(productId, size) {
@@ -88,6 +468,8 @@
           productId: product.id,
           title: product.title,
           imageUrl: product.imageUrl,
+          price: product.price,
+          weightGrams: product.weightGrams,
           size,
           qty: 1
         };
@@ -101,32 +483,58 @@
 
     function renderProducts() {
       const grid = document.getElementById("productGrid");
+      const resultCount = document.getElementById("resultCount");
       grid.innerHTML = "";
 
-      PRODUCTS.forEach((p) => {
+      const filtered = PRODUCTS.filter(p => {
+        const matchGender = activeGender === "all" || p.gender === activeGender;
+        const matchSub = activeSub === "all" || p.sub === activeSub;
+        return matchGender && matchSub;
+      });
+
+      resultCount.textContent = filtered.length + " article" + (filtered.length > 1 ? "s" : "");
+
+      filtered.forEach((p) => {
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
           <div class="image-frame">
-            <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'">
+            <img src="${p.imageUrl}" alt="${p.title}" onerror="this.style.display='none'" loading="lazy">
           </div>
           <div class="label">${p.title}</div>
-          <div class="meta">Choisissez une taille</div>
+          <span class="tag">${CATEGORIES[p.gender].label}</span>
+          <div class="price">${formatEUR(p.price)} €</div>
 
-          <div class="actions">
-            <select data-product-size>
-              ${SIZES.map(s => `<option value="${s}">${s}</option>`).join("")}
-            </select>
-            <button type="button" data-add>Ajouter au panier</button>
-          </div>
+          <div class="size-row" data-sizes></div>
+          <button type="button" class="add-btn" data-add>Ajouter au panier</button>
         `;
 
-        const select = card.querySelector("[data-product-size]");
-        const btn = card.querySelector("[data-add]");
+        const sizeRow = card.querySelector("[data-sizes]");
+        let selectedSize = SIZES[0];
 
-        btn.addEventListener("click", () => {
-          addToCart(p, select.value);
+        SIZES.forEach((s, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "size-pill" + (idx === 0 ? " active" : "");
+          btn.textContent = s;
+          btn.addEventListener("click", () => {
+            selectedSize = s;
+            sizeRow.querySelectorAll(".size-pill").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+          });
+          sizeRow.appendChild(btn);
+        });
+
+        const addBtn = card.querySelector("[data-add]");
+        addBtn.addEventListener("click", () => {
+          addToCart(p, selectedSize);
+          addBtn.textContent = "Ajouté ✓";
+          addBtn.classList.add("added");
+          setTimeout(() => {
+            addBtn.textContent = "Ajouter au panier";
+            addBtn.classList.remove("added");
+          }, 900);
         });
 
         grid.appendChild(card);
@@ -137,6 +545,7 @@
       window.location.href = "panier.html";
     });
 
+    renderFilters();
     renderProducts();
     cartCountText();
   </script>

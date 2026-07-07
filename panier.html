@@ -3,46 +3,309 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Panier</title>
+  <title>Sporty Store — Panier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;font-family:Arial, Helvetica, sans-serif;background:#f6f6f6;color:#222}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-    .pill{background:#fff;border:1px solid #ddd;border-radius:999px;padding:8px 12px;font-weight:800}
-    .cart{margin-top:10px;background:#fff;border:1px solid #ddd;border-radius:12px;padding:14px}
-    .cart-items{display:flex;flex-direction:column;gap:10px}
-    .cart-item{border:1px solid #eee;border-radius:10px;padding:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-    .cart-left{min-width:240px}
-    .cart-title{font-weight:900;margin-bottom:4px}
-    .cart-sub{font-size:13px;color:#444}
-    .qty{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .qty input{width:90px;padding:8px 10px;border-radius:8px;border:1px solid #ccc}
-    button{padding:10px 12px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer;font-weight:900}
-    .secondary{background:#fff;color:#111}
-    .danger{background:#fff;color:#b00020;border-color:#b00020}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:12px}
-    .small{font-size:13px;color:#444}
+    :root{
+      --ink:#1B1F1D;
+      --paper:#F1EFE4;
+      --moss:#3F5B45;
+      --moss-dark:#2C4230;
+      --citrus:#E8A33D;
+      --chalk:#8B8F87;
+      --card:#FFFFFF;
+      --radius:14px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .display{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      letter-spacing:0.03em;
+    }
+
+    header{
+      background:var(--paper);
+      border-bottom:1px solid rgba(27,31,29,0.12);
+    }
+    .lane-stripe{
+      height:4px;
+      background:linear-gradient(90deg, var(--moss) 0%, var(--citrus) 50%, var(--moss) 100%);
+    }
+
+    .topbar{
+      max-width:900px;
+      margin:0 auto;
+      padding:18px 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .brand{ font-size:28px; color:var(--ink); }
+
+    .back-link{
+      background:none;
+      border:none;
+      color:var(--moss-dark);
+      font-weight:600;
+      font-size:14px;
+      cursor:pointer;
+      padding:8px 4px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .back-link:hover{ color:var(--moss); }
+    .back-link:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    .wrap{ max-width:900px; margin:0 auto; padding:32px 24px 64px; }
+
+    .cart-items{ display:flex; flex-direction:column; gap:14px; }
+
+    .cart-item{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      border:1px solid rgba(27,31,29,0.06);
+    }
+
+    .cart-left{ min-width:200px; }
+    .cart-title{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      font-size:20px;
+      letter-spacing:0.03em;
+      margin-bottom:4px;
+    }
+    .cart-sub{
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      color:var(--moss);
+      font-weight:600;
+    }
+
+    .stepper{
+      display:flex;
+      align-items:center;
+      gap:0;
+      background:var(--paper);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(27,31,29,0.12);
+    }
+    .stepper button{
+      width:36px;
+      height:36px;
+      border:none;
+      background:transparent;
+      color:var(--ink);
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .stepper button:hover{ background:rgba(27,31,29,0.06); }
+    .stepper span{
+      min-width:32px;
+      text-align:center;
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .qty-block{ display:flex; align-items:center; gap:14px; }
+
+    .line-total{
+      font-weight:700;
+      font-size:14px;
+      min-width:70px;
+      text-align:right;
+    }
+
+    .remove-btn{
+      background:none;
+      border:none;
+      color:#B0392B;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+      padding:8px 4px;
+    }
+    .remove-btn:hover{ text-decoration:underline; }
+
+    .empty-state{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:40px 24px;
+      text-align:center;
+      color:var(--chalk);
+      border:1px dashed rgba(27,31,29,0.2);
+    }
+    .empty-state a{
+      display:inline-block;
+      margin-top:14px;
+      background:var(--moss);
+      color:#fff;
+      text-decoration:none;
+      padding:10px 20px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:13px;
+    }
+    .empty-state a:hover{ background:var(--moss-dark); }
+
+    .scoreboard{
+      margin-top:24px;
+      background:var(--ink);
+      border-radius:var(--radius);
+      padding:20px 24px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .score-line{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:16px;
+    }
+    .score-line .label{
+      color:var(--paper);
+      font-size:13px;
+      letter-spacing:0.04em;
+      font-weight:500;
+      opacity:0.75;
+    }
+    .score-line .label span{
+      font-size:11px;
+      opacity:0.8;
+    }
+    .score-line .value{
+      color:var(--paper);
+      font-size:14px;
+      font-weight:700;
+    }
+    .total-line{
+      border-top:1px solid rgba(241,239,228,0.18);
+      padding-top:12px;
+      margin-top:2px;
+    }
+    .total-line .label{
+      font-size:12px;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      opacity:0.7;
+    }
+    .scoreboard .total{
+      font-family:'Bebas Neue', system-ui, sans-serif;
+      font-size:32px;
+      color:var(--citrus);
+      letter-spacing:0.02em;
+    }
+
+    .actions-row{
+      display:flex;
+      gap:12px;
+      margin-top:20px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:13px 22px;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+      transition:transform .15s ease, background .15s ease;
+    }
+    .btn:hover{ transform:translateY(-1px); }
+    .btn:focus-visible{ outline:2px solid var(--citrus); outline-offset:2px; }
+
+    .btn-clear{
+      background:transparent;
+      border:1px solid rgba(27,31,29,0.2);
+      color:var(--ink);
+    }
+    .btn-clear:hover{ border-color:#B0392B; color:#B0392B; }
+
+    .btn-whatsapp{
+      background:var(--moss);
+      color:#fff;
+      flex:1;
+      min-width:220px;
+      text-align:center;
+      font-size:15px;
+    }
+    .btn-whatsapp:hover{ background:var(--moss-dark); }
+
+    .hint{
+      margin-top:14px;
+      font-size:12px;
+      color:var(--chalk);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .btn, .btn:hover{ transition:none !important; transform:none !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <header>
+    <div class="lane-stripe"></div>
     <div class="topbar">
-      <div class="pill">🛒 Votre panier</div>
-      <button type="button" class="secondary" id="backBtn">← Retour catalogue</button>
+      <div class="brand display">Votre <span style="color:var(--moss)">panier</span></div>
+      <button type="button" class="back-link" id="backBtn">← Retour catalogue</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="cart-items" id="cartItems"></div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+      Votre panier est vide.
+      <br>
+      <a href="index.html">Voir le catalogue</a>
     </div>
 
-    <div class="cart">
-      <div class="cart-items" id="cartItems"></div>
-
-      <div class="actions">
-        <div class="small" id="emptyMsg" style="display:none;">Votre panier est vide.</div>
-        <button type="button" class="secondary" id="clearCartBtn">Vider</button>
-        <button type="button" id="whatsAppBtn">Envoyer sur WhatsApp</button>
+    <div id="summarySection">
+      <div class="scoreboard">
+        <div class="score-line">
+          <span class="label">Sous-total</span>
+          <span class="value" id="subtotalValue">0,00 €</span>
+        </div>
+        <div class="score-line">
+          <span class="label">Livraison <span id="weightHint"></span></span>
+          <span class="value" id="shippingValue">0,00 €</span>
+        </div>
+        <div class="score-line total-line">
+          <span class="label">Total</span>
+          <span class="total" id="grandTotalValue">0,00 €</span>
+        </div>
       </div>
 
-      <div class="small" style="margin-top:10px;">
-        Message : produit + taille + quantité.
+      <div class="actions-row">
+        <button type="button" class="btn btn-clear" id="clearCartBtn">Vider</button>
+        <button type="button" class="btn btn-whatsapp" id="whatsAppBtn">Envoyer sur WhatsApp</button>
       </div>
+
+      <div class="hint">Le message envoyé indique : produit + taille + quantité + total avec livraison.</div>
     </div>
   </div>
 
@@ -51,6 +314,22 @@
 
     // WhatsApp (international) - fourni par toi
     const WHATSAPP_NUMBER = "33782216309";
+
+    // Livraison : 15€ de base jusqu'à 1kg, puis +9€ par kilo supplémentaire
+    const SHIPPING_BASE = 15;
+    const SHIPPING_BASE_KG = 1;
+    const SHIPPING_PER_EXTRA_KG = 9;
+
+    function formatEUR(n) {
+      return Number(n).toFixed(2).replace(".", ",");
+    }
+
+    function computeShipping(totalWeightGrams) {
+      const kg = totalWeightGrams / 1000;
+      if (kg <= SHIPPING_BASE_KG) return SHIPPING_BASE;
+      const extraKg = kg - SHIPPING_BASE_KG;
+      return SHIPPING_BASE + extraKg * SHIPPING_PER_EXTRA_KG;
+    }
 
     function loadCart() {
       try {
@@ -72,10 +351,24 @@
       lines.push("Bonjour 👋 Je souhaite commander :");
       lines.push("");
 
+      let subtotal = 0;
+      let totalWeightGrams = 0;
+
       itemsArr.forEach((it) => {
-        lines.push(`- ${it.title} | Taille: ${it.size} | Quantité: ${it.qty}`);
+        const itemPrice = Number(it.price) || 0;
+        const itemWeight = Number(it.weightGrams) || 0;
+        subtotal += itemPrice * it.qty;
+        totalWeightGrams += itemWeight * it.qty;
+        lines.push(`- ${it.title} | Taille: ${it.size} | Quantité: ${it.qty} | ${formatEUR(itemPrice * it.qty)} €`);
       });
 
+      const shipping = computeShipping(totalWeightGrams);
+      const grandTotal = subtotal + shipping;
+
+      lines.push("");
+      lines.push(`Sous-total : ${formatEUR(subtotal)} €`);
+      lines.push(`Livraison : ${formatEUR(shipping)} €`);
+      lines.push(`Total : ${formatEUR(grandTotal)} €`);
       lines.push("");
       lines.push("Merci !");
       return lines.join("\n");
@@ -89,58 +382,93 @@
     function renderCart() {
       const cart = loadCart();
       const itemsDiv = document.getElementById("cartItems");
-      const emptyMsg = document.getElementById("emptyMsg");
+      const emptyState = document.getElementById("emptyState");
+      const summarySection = document.getElementById("summarySection");
 
       const entries = Object.values(cart);
       itemsDiv.innerHTML = "";
 
       if (entries.length === 0) {
-        emptyMsg.style.display = "block";
+        emptyState.style.display = "block";
+        summarySection.style.display = "none";
         return;
       }
-      emptyMsg.style.display = "none";
+      emptyState.style.display = "none";
+      summarySection.style.display = "block";
+
+      let subtotal = 0;
+      let totalWeightGrams = 0;
 
       entries.forEach((item) => {
+        const itemPrice = Number(item.price) || 0;
+        const itemWeight = Number(item.weightGrams) || 0;
+
+        subtotal += itemPrice * item.qty;
+        totalWeightGrams += itemWeight * item.qty;
+
         const row = document.createElement("div");
         row.className = "cart-item";
 
         row.innerHTML = `
           <div class="cart-left">
             <div class="cart-title">${item.title}</div>
-            <div class="cart-sub">Taille : <b>${item.size}</b></div>
+            <div class="cart-sub">Taille ${item.size} · ${formatEUR(itemPrice)} € / unité</div>
           </div>
 
-          <div class="qty">
-            <span class="small" style="font-weight:900;">Qté</span>
-            <input type="number" min="1" value="${item.qty}" data-qty />
-            <button type="button" class="danger" data-remove>Supprimer</button>
+          <div class="qty-block">
+            <div class="stepper">
+              <button type="button" data-minus aria-label="Diminuer la quantité">−</button>
+              <span data-qty-value>${item.qty}</span>
+              <button type="button" data-plus aria-label="Augmenter la quantité">+</button>
+            </div>
+            <div class="line-total">${formatEUR(itemPrice * item.qty)} €</div>
+            <button type="button" class="remove-btn" data-remove>Supprimer</button>
           </div>
         `;
 
-        const qtyInput = row.querySelector("[data-qty]");
+        const qtyValue = row.querySelector("[data-qty-value]");
+        const minusBtn = row.querySelector("[data-minus]");
+        const plusBtn = row.querySelector("[data-plus]");
         const removeBtn = row.querySelector("[data-remove]");
+        const key = makeCartKey(item.productId, item.size);
 
-        qtyInput.addEventListener("change", () => {
-          const v = Math.max(1, parseInt(qtyInput.value || "1", 10));
-          const key = makeCartKey(item.productId, item.size);
-          cart[key].qty = v;
-          saveCart(cart);
+        plusBtn.addEventListener("click", () => {
+          const c = loadCart();
+          c[key].qty += 1;
+          saveCart(c);
+          renderCart();
+        });
+
+        minusBtn.addEventListener("click", () => {
+          const c = loadCart();
+          const newQty = Math.max(1, c[key].qty - 1);
+          c[key].qty = newQty;
+          saveCart(c);
           renderCart();
         });
 
         removeBtn.addEventListener("click", () => {
-          const key = makeCartKey(item.productId, item.size);
-          delete cart[key];
-          saveCart(cart);
+          const c = loadCart();
+          delete c[key];
+          saveCart(c);
           renderCart();
         });
 
         itemsDiv.appendChild(row);
       });
+
+      const shipping = computeShipping(totalWeightGrams);
+      const grandTotal = subtotal + shipping;
+      const weightKg = totalWeightGrams / 1000;
+
+      document.getElementById("subtotalValue").textContent = formatEUR(subtotal) + " €";
+      document.getElementById("shippingValue").textContent = formatEUR(shipping) + " €";
+      document.getElementById("grandTotalValue").textContent = formatEUR(grandTotal) + " €";
+      document.getElementById("weightHint").textContent = "(" + weightKg.toFixed(2).replace(".", ",") + " kg)";
     }
 
     document.getElementById("backBtn").addEventListener("click", () => {
-      window.location.href = "catalogue.html";
+      window.location.href = "index.html";
     });
 
     document.getElementById("clearCartBtn").addEventListener("click", () => {
