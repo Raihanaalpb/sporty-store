@@ -43,10 +43,10 @@ const SHIPPING_PER_EXTRA_KG = 9;
 
 // ⚠️ Remplace par ton vrai numéro WhatsApp (indicatif inclus, sans le +)
 const WHATSAPP_NUMBER = "33782216309";
-// ⚠️ Remplace par ton vrai pseudo Revolut
-const REVOLUT_USERNAME = "tonpseudo";
-// ⚠️ Remplace par ton vrai client-id PayPal Business
-const PAYPAL_CLIENT_ID = "test";
+// Ton pseudo Revolut
+const REVOLUT_USERNAME = "raihanav111";
+// Ton client-id PayPal Business
+const PAYPAL_CLIENT_ID = "AZ9qRcEfa5o6YuvIi8NH-8k3BDmmFd-ZOKxDZrva5B5G6mLu0_PWFm5rmTKkuuObXAtBfGFcAJbcRAfO";
 
 const CART_STORAGE_KEY = "sporty_store_cart_v1";
 
@@ -605,7 +605,7 @@ function Panier({ cartEntries, cart, changeQty, removeItem, clearCart, subtotal,
       <div style={{ marginTop: 28 }}>
         <h3 style={{ fontFamily: DISPLAY_FONT, fontSize: 18, margin: "0 0 4px", color: COLORS.mossDark }}>Payer en ligne</h3>
         <p style={{ margin: "0 0 14px", fontSize: 12, color: COLORS.chalk, lineHeight: 1.5 }}>
-          ⚠️ Mode test : remplace <code>PAYPAL_CLIENT_ID</code> et <code>REVOLUT_USERNAME</code> en haut du fichier par tes vraies infos pour encaisser réellement.
+          Paiement sécurisé via PayPal ou Revolut.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
           <div style={{ background: COLORS.card, border: "1px solid rgba(58,44,51,0.08)", borderRadius: 2, padding: 16 }}>
