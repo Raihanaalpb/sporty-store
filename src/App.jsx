@@ -18,16 +18,19 @@ const BODY_FONT = "'Inter', system-ui, sans-serif";
 
 // ====== CONFIG CATÉGORIES ======
 const CATEGORIES = {
-  sport: { label: "Sport", subs: ["Fitness", "Yoga", "Running"] },
-  femme: { label: "Femme", subs: ["Robe", "Sport"] },
+  yoga: { label: "Yoga", subs: ["Sea", "Huly"] },
+  bikini: { label: "Bikini", subs: ["G", "D"] },
+  pretaporter: { label: "Prêt-à-porter", subs: ["Ora", "Vela", "Aeli"] },
 };
 
 const SUB_WEIGHTS = {
-  Fitness: 400,
-  Yoga: 300,
-  Running: 350,
-  Robe: 100,
-  Sport: 400,
+  Sea: 400,
+  Huly: 400,
+  G: 150,
+  D: 150,
+  Ora: 350,
+  Vela: 350,
+  Aeli: 350,
 };
 
 const ALL_CATS = Object.keys(CATEGORIES);
