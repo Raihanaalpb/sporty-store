@@ -19,13 +19,14 @@ const BODY_FONT = "'Inter', system-ui, sans-serif";
 // ====== CONFIG CATÉGORIES ======
 const CATEGORIES = {
   yoga: { label: "Yoga", subs: ["Sea", "Huly"] },
-  bikini: { label: "Bikini", subs: ["G", "D"] },
+  bikini: { label: "Bikini", subs: ["Casa", "G", "D"] },
   pretaporter: { label: "Prêt-à-porter", subs: ["Ora", "Vela", "Aeli"] },
 };
 
 const SUB_WEIGHTS = {
   Sea: 400,
   Huly: 400,
+  Casa: 150,
   G: 150,
   D: 150,
   Ora: 350,
@@ -36,8 +37,8 @@ const SUB_WEIGHTS = {
 const ALL_CATS = Object.keys(CATEGORIES);
 const SIZES = ["S", "M", "L", "XL"];
 
-// Livraison : 15€ de base jusqu'à 1kg, puis +9€ par kilo supplémentaire
-const SHIPPING_BASE = 15;
+// Livraison : 20€ de base jusqu'à 1kg, puis +9€ par kilo supplémentaire
+const SHIPPING_BASE = 20;
 const SHIPPING_BASE_KG = 1;
 const SHIPPING_PER_EXTRA_KG = 9;
 
@@ -50,6 +51,70 @@ const PAYPAL_CLIENT_ID = "AZ9qRcEfa5o6YuvIi8NH-8k3BDmmFd-ZOKxDZrva5B5G6mLu0_PWFm
 
 const CART_STORAGE_KEY = "sporty_store_cart_v1";
 
+// ====== PRODUITS RÉELS "CASA" (bikinis, avec vraies photos Supabase) ======
+const CASA_BASE_URL = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/casa";
+
+// Pour chaque album, liste juste les noms de fichiers (pas l'URL complète).
+// Dès que tu as les photos d'un album marqué "files: []", remplis la liste
+// et ses vraies photos apparaîtront automatiquement sur le site.
+const CASA_ALBUMS = {
+  "c-015012": {
+    sub: "Casa",
+    price: 29,
+    files: [
+      "IMG_0187.jpeg",
+      "IMG_0188.jpeg",
+      "IMG_0189.jpeg",
+      "IMG_0191.jpeg",
+      "IMG_9322.jpeg",
+      "IMG_9323.jpeg",
+      "IMG_9324.jpeg",
+      "IMG_9325.jpeg",
+      "IMG_9326.jpeg",
+    ],
+  },
+  "c-025012": {
+    sub: "Casa",
+    price: 29,
+    files: ["IMG_9885.jpeg", "IMG_9886.jpeg", "IMG_9887.jpeg", "IMG_9888.jpeg", "IMG_9889.jpeg", "IMG_9890.jpeg"],
+  },
+  "c-035012": {
+    sub: "Casa",
+    price: 29,
+    files: ["IMG_6318.jpeg", "IMG_6319.jpeg", "IMG_6320.jpeg", "IMG_6321.jpeg"],
+  },
+  // ⚠️ En attente : la liste envoyée pour ce produit était identique à celle de c-035012,
+  // probablement un copier-coller en trop. Renvoie la vraie liste pour ce produit.
+  "c-045512": { sub: "Casa", price: 32, files: [] },
+  "c-055512": {
+    sub: "Casa",
+    price: 32,
+    files: ["IMG_6413.jpeg", "IMG_6414.jpeg", "IMG_6415.jpeg", "IMG_6416.jpeg", "IMG_6417.jpeg", "IMG_6418.jpeg", "IMG_6419.jpeg"],
+  },
+  "c-066512": {
+    sub: "Casa",
+    price: 32,
+    files: ["IMG_7072.jpeg", "IMG_7074.jpeg", "IMG_7075.jpeg"],
+  },
+  "c-076512": {
+    sub: "Casa",
+    price: 32,
+    files: ["IMG_7076.jpeg", "IMG_7077.jpeg", "IMG_7078.jpeg", "IMG_7079.jpeg", "IMG_7080.jpeg"],
+  },
+};
+
+const CASA_PRODUCTS = Object.entries(CASA_ALBUMS).map(([albumId, album]) => ({
+  id: albumId,
+  title: "Bikini " + album.sub + " · " + albumId,
+  cat: "bikini",
+  sub: album.sub,
+  brand: "Casa",
+  price: album.price,
+  weightGrams: SUB_WEIGHTS[album.sub],
+  images: album.files.map((f) => `${CASA_BASE_URL}/${albumId}/${f}`),
+  imageUrl: album.files.length ? `${CASA_BASE_URL}/${albumId}/${album.files[0]}` : null,
+}));
+
 function formatEUR(n) {
   return Number(n).toFixed(2).replace(".", ",");
 }
@@ -60,15 +125,18 @@ function computeShipping(totalWeightGrams) {
   return SHIPPING_BASE + (kg - SHIPPING_BASE_KG) * SHIPPING_PER_EXTRA_KG;
 }
 
+// Génère les produits "factices" (Yoga / Prêt-à-porter uniquement — le Bikini
+// utilise les vrais produits CASA_PRODUCTS définis plus haut)
 function generateProducts() {
-  return Array.from({ length: 40 }, (_, i) => {
+  const fakeCats = ALL_CATS.filter((c) => c !== "bikini");
+  const fakeProducts = Array.from({ length: 30 }, (_, i) => {
     const n = String(i + 1).padStart(2, "0");
-    const cat = ALL_CATS[Math.floor(Math.random() * ALL_CATS.length)];
+    const cat = fakeCats[Math.floor(Math.random() * fakeCats.length)];
     const subs = CATEGORIES[cat].subs;
     const sub = subs[Math.floor(Math.random() * subs.length)];
     const price = Math.floor(Math.random() * (89 - 19 + 1)) + 19;
     return {
-      id: n,
+      id: "f" + n,
       title: sub + " " + n,
       cat,
       sub,
@@ -80,6 +148,7 @@ function generateProducts() {
         ".jpg",
     };
   });
+  return [...CASA_PRODUCTS, ...fakeProducts];
 }
 
 function makeKey(productId, size) {
@@ -260,6 +329,7 @@ export default function SportyStoreApp() {
 // ====== Navigation catégories façon menu déroulant (comme le site) ======
 function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub, addToCart }) {
   const [openCat, setOpenCat] = useState(null);
+  const [galleryProduct, setGalleryProduct] = useState(null);
   const navRef = useRef(null);
 
   useEffect(() => {
@@ -306,6 +376,7 @@ function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub,
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    selectCat(catKey, "all");
                     setOpenCat(isOpen ? null : catKey);
                   }}
                   style={{
@@ -397,9 +468,13 @@ function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub,
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20 }}>
         {products.map((p) => (
-          <ProductCard key={p.id} product={p} onAdd={addToCart} />
+          <ProductCard key={p.id} product={p} onAdd={addToCart} onOpenGallery={setGalleryProduct} />
         ))}
       </div>
+
+      {galleryProduct && (
+        <ProductGallery product={galleryProduct} onClose={() => setGalleryProduct(null)} />
+      )}
     </div>
   );
 }
@@ -419,9 +494,10 @@ function dropdownOptionStyle(active) {
   };
 }
 
-function ProductCard({ product, onAdd }) {
+function ProductCard({ product, onAdd, onOpenGallery }) {
   const [size, setSize] = useState(SIZES[0]);
   const [added, setAdded] = useState(false);
+  const hasGallery = product.images && product.images.length > 1;
 
   function handleAdd() {
     onAdd(product, size);
@@ -431,18 +507,53 @@ function ProductCard({ product, onAdd }) {
 
   return (
     <div style={{ background: COLORS.card, borderRadius: 2, padding: 14, border: "1px solid rgba(58,44,51,0.06)" }}>
-      <div style={{ height: 190, width: "100%", borderRadius: 2, overflow: "hidden", background: COLORS.paper, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          onError={(e) => (e.currentTarget.style.display = "none")}
-        />
+      <div
+        onClick={() => hasGallery && onOpenGallery(product)}
+        style={{
+          position: "relative",
+          height: 190,
+          width: "100%",
+          borderRadius: 2,
+          overflow: "hidden",
+          background: COLORS.paper,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: hasGallery ? "zoom-in" : "default",
+        }}
+      >
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.title}
+            loading="lazy"
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            onError={(e) => (e.currentTarget.style.display = "none")}
+          />
+        ) : (
+          <span style={{ fontSize: 12, color: COLORS.chalk, fontStyle: "italic" }}>Photos à venir</span>
+        )}
+        {hasGallery && (
+          <span
+            style={{
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+              background: "rgba(58,44,51,0.75)",
+              color: "#fff",
+              fontSize: 11,
+              fontWeight: 700,
+              padding: "3px 8px",
+              borderRadius: 2,
+            }}
+          >
+            {product.images.length} photos
+          </span>
+        )}
       </div>
       <div style={{ marginTop: 12, fontFamily: DISPLAY_FONT, fontSize: 19, letterSpacing: "0.03em" }}>{product.title}</div>
       <span style={{ display: "inline-block", marginTop: 2, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.moss, fontWeight: 600 }}>
-        {CATEGORIES[product.cat].label}
+        {product.brand ? product.brand : CATEGORIES[product.cat].label}
       </span>
       <div style={{ marginTop: 6, fontWeight: 700, fontSize: 15 }}>{formatEUR(product.price)} €</div>
 
@@ -487,6 +598,81 @@ function ProductCard({ product, onAdd }) {
       >
         {added ? "Ajouté ✓" : "Ajouter au panier"}
       </button>
+    </div>
+  );
+}
+
+// ====== Galerie photo (ouverte au clic sur un produit avec plusieurs photos) ======
+function ProductGallery({ product, onClose }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(58,44,51,0.85)",
+        zIndex: 50,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: COLORS.paper,
+          borderRadius: 2,
+          maxWidth: 560,
+          width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          padding: 20,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div style={{ fontFamily: DISPLAY_FONT, fontSize: 20 }}>{product.title}</div>
+          <button
+            onClick={onClose}
+            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: COLORS.ink, lineHeight: 1 }}
+            aria-label="Fermer"
+          >
+            ×
+          </button>
+        </div>
+
+        <div style={{ width: "100%", aspectRatio: "1 / 1", background: "#fff", borderRadius: 2, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <img
+            src={product.images[activeIndex]}
+            alt={`${product.title} ${activeIndex + 1}`}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginTop: 12, overflowX: "auto", paddingBottom: 4 }}>
+          {product.images.map((src, i) => (
+            <button
+              key={src}
+              onClick={() => setActiveIndex(i)}
+              style={{
+                flex: "0 0 auto",
+                width: 56,
+                height: 56,
+                padding: 0,
+                borderRadius: 2,
+                overflow: "hidden",
+                border: i === activeIndex ? `2px solid ${COLORS.moss}` : "1px solid rgba(58,44,51,0.15)",
+                cursor: "pointer",
+                background: "#fff",
+              }}
+            >
+              <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
