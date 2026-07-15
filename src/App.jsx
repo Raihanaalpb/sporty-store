@@ -38,40 +38,49 @@ const SUB_WEIGHTS = {
 // ====== PRODUITS RÉELS "A" (dossier /test/al/...) ======
 const A_BASE_URL = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/al";
 
-// ⚠️ Il manque encore les noms exacts des 5 fichiers "Airbrush Better Together Te..."
-// (coupés dans la capture) — ajoute-les dans ce tableau dès que tu les as.
+// ⚠️ J'ai déduit quelle photo correspond à quelle couleur d'après les noms de
+// fichiers ("black" → Noir, "Pink" → Rose, "White" → Blanc, "bleu/beu1" → Bleu).
+// Corrige-moi si une photo est mal classée.
 const A_PRODUCTS_CONFIG = {
   "ensemble-bra-jupe-tennis": {
     folder: "ensemble bra & jupe tennis",
     sub: "A",
     price: 60,
-    colors: ["Blanc", "Noir", "Rose", "Bleu"],
-    files: [
-      "Airbrush Better Together Tennis Skirt - Paradise _White--0.jpg",
-      "Airbrush Better Together Tennis Skirt - Paradise black.jpg",
-      "Airbrush Better Together Tennis Skirt - Paradise Pink--0.png",
-      "Airbrush Better Together Tennis Skirt - Paradise Pink_--4.jpg",
-      "Airbrush Better Together Tennis Skirt - Paradise Pink_White--2 copie.jpg",
-      "beu1.JPG",
-      "bleu.JPG",
-      "noir.JPG",
-    ],
+    colorImages: {
+      Blanc: ["Airbrush Better Together Tennis Skirt - Paradise _White--0.jpg"],
+      Noir: ["Airbrush Better Together Tennis Skirt - Paradise black.jpg", "noir.JPG"],
+      Rose: [
+        "Airbrush Better Together Tennis Skirt - Paradise Pink--0.png",
+        "Airbrush Better Together Tennis Skirt - Paradise Pink_--4.jpg",
+        "Airbrush Better Together Tennis Skirt - Paradise Pink_White--2 copie.jpg",
+      ],
+      Bleu: ["beu1.JPG", "bleu.JPG"],
+    },
   },
 };
 
-const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => ({
-  id,
-  title: "Ensemble bra & jupe tennis",
-  cat: "yoga",
-  sub: p.sub,
-  price: p.price,
-  colors: p.colors,
-  weightGrams: SUB_WEIGHTS[p.sub],
-  images: p.files.map((f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`),
-  imageUrl: p.files.length
-    ? `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(p.files[0])}`
-    : null,
-}));
+const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
+  const colors = Object.keys(p.colorImages);
+  const colorImages = Object.fromEntries(
+    Object.entries(p.colorImages).map(([color, files]) => [
+      color,
+      files.map((f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`),
+    ])
+  );
+  const allImages = Object.values(colorImages).flat();
+  return {
+    id,
+    title: "Ensemble bra & jupe tennis",
+    cat: "yoga",
+    sub: p.sub,
+    price: p.price,
+    colors,
+    colorImages,
+    weightGrams: SUB_WEIGHTS[p.sub],
+    images: allImages,
+    imageUrl: colorImages[colors[0]][0],
+  };
+});
 
 const ALL_CATS = Object.keys(CATEGORIES);
 const SIZES = ["S", "M", "L", "XL"];
@@ -536,7 +545,12 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
   const [size, setSize] = useState(SIZES[0]);
   const [color, setColor] = useState(product.colors ? product.colors[0] : null);
   const [added, setAdded] = useState(false);
-  const hasGallery = product.images && product.images.length > 1;
+
+  const displayedImages =
+    product.colorImages && color ? product.colorImages[color] : product.images;
+  const displayedImageUrl =
+    displayedImages && displayedImages.length ? displayedImages[0] : product.imageUrl;
+  const hasGallery = displayedImages && displayedImages.length > 1;
 
   function handleAdd() {
     onAdd(product, size, color);
@@ -544,10 +558,15 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
     setTimeout(() => setAdded(false), 900);
   }
 
+  function openGallery() {
+    if (!hasGallery) return;
+    onOpenGallery({ ...product, images: displayedImages });
+  }
+
   return (
     <div style={{ background: COLORS.card, borderRadius: 2, padding: 14, border: "1px solid rgba(58,44,51,0.06)" }}>
       <div
-        onClick={() => hasGallery && onOpenGallery(product)}
+        onClick={openGallery}
         style={{
           position: "relative",
           height: 190,
@@ -561,9 +580,9 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
           cursor: hasGallery ? "zoom-in" : "default",
         }}
       >
-        {product.imageUrl ? (
+        {displayedImageUrl ? (
           <img
-            src={product.imageUrl}
+            src={displayedImageUrl}
             alt={product.title}
             loading="lazy"
             decoding="async"
@@ -587,7 +606,7 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
               borderRadius: 2,
             }}
           >
-            {product.images.length} photos
+            {displayedImages.length} photos
           </span>
         )}
       </div>
