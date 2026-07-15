@@ -119,6 +119,29 @@ const A_PRODUCTS_CONFIG = {
       Vert: ["vert.JPG"],
     },
   },
+  set5: {
+    folder: "set5",
+    title: "Set 5",
+    sub: "A",
+    price: 40,
+    colorImages: {
+      Rouge: ["rouge.JPG"],
+    },
+  },
+  set6: {
+    folder: "set6",
+    title: "Set 6",
+    sub: "A",
+    price: 40,
+    mainImage: "pp.JPG",
+    extraImages: ["IMG_3712.JPG"],
+    colorImages: {
+      Blanc: ["blanc.JPG"],
+      Noir: ["noir.JPG"],
+      Rose: ["rose.JPG"],
+      Violet: ["violet.JPG"],
+    },
+  },
 };
 
 const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
