@@ -72,6 +72,53 @@ const A_PRODUCTS_CONFIG = {
       Noir: ["noir1.JPG"],
     },
   },
+  set2: {
+    folder: "set2",
+    title: "Set 2",
+    sub: "A",
+    price: 60,
+    mainImage: "pp.jpg",
+    colorImages: {
+      Blanc: ["blanc.JPG"],
+      Bleu: ["bleu.JPG"],
+      Bordeaux: ["bordeau.JPG"],
+      Brun: ["brun.JPG"],
+      Jaune: ["jaune.JPG"],
+      Kaki: ["kaki.JPG"],
+      Noir: ["noir.JPG"],
+      Orange: ["orange.JPG"],
+      Rose: ["rose.JPG"],
+      Violet: ["violet.JPG"],
+    },
+  },
+  set3: {
+    folder: "set3",
+    title: "Set 3",
+    sub: "A",
+    price: 45,
+    mainImage: "pp.JPG",
+    colorImages: {
+      Bleu: ["bleu.JPG"],
+      Brun: ["brun.JPG"],
+      Noir: ["noir.JPG"],
+      Rose: ["rose.JPG"],
+      Rouge: ["rouge.JPG"],
+    },
+  },
+  set4: {
+    folder: "set4",
+    title: "Set 4",
+    sub: "A",
+    price: 50,
+    extraImages: ["all.JPG"],
+    colorImages: {
+      Bleu: ["bleu.JPG"],
+      Brun: ["brun.JPG"],
+      Gris: ["gris.JPG"],
+      Noir: ["noir.JPG"],
+      Vert: ["vert.JPG"],
+    },
+  },
 };
 
 const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
