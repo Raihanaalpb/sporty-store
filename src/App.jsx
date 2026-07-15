@@ -532,7 +532,7 @@ function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub,
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14 }}>
         {products.map((p) => (
           <ProductCard key={p.id} product={p} onAdd={addToCart} onOpenGallery={setGalleryProduct} />
         ))}
@@ -583,13 +583,13 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
   }
 
   return (
-    <div style={{ background: COLORS.card, borderRadius: 2, padding: 14, border: "1px solid rgba(58,44,51,0.06)" }}>
+    <div style={{ background: COLORS.card, borderRadius: 2, padding: 10, border: "1px solid rgba(58,44,51,0.06)" }}>
       <div
         onClick={openGallery}
         style={{
           position: "relative",
-          height: 190,
           width: "100%",
+          aspectRatio: "3 / 4",
           borderRadius: 2,
           overflow: "hidden",
           background: COLORS.paper,
@@ -605,23 +605,23 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
             alt={product.title}
             loading="lazy"
             decoding="async"
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
             onError={(e) => (e.currentTarget.style.display = "none")}
           />
         ) : (
-          <span style={{ fontSize: 12, color: COLORS.chalk, fontStyle: "italic" }}>Photos à venir</span>
+          <span style={{ fontSize: 11, color: COLORS.chalk, fontStyle: "italic", padding: 8, textAlign: "center" }}>Photos à venir</span>
         )}
         {hasGallery && (
           <span
             style={{
               position: "absolute",
-              bottom: 8,
-              right: 8,
+              bottom: 6,
+              right: 6,
               background: "rgba(58,44,51,0.75)",
               color: "#fff",
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 700,
-              padding: "3px 8px",
+              padding: "2px 6px",
               borderRadius: 2,
             }}
           >
@@ -629,14 +629,14 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
           </span>
         )}
       </div>
-      <div style={{ marginTop: 12, fontFamily: DISPLAY_FONT, fontSize: 19, letterSpacing: "0.03em" }}>{product.title}</div>
-      <span style={{ display: "inline-block", marginTop: 2, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.moss, fontWeight: 600 }}>
+      <div style={{ marginTop: 8, fontFamily: DISPLAY_FONT, fontSize: 15, letterSpacing: "0.02em", lineHeight: 1.2 }}>{product.title}</div>
+      <span style={{ display: "inline-block", marginTop: 1, fontSize: 10, letterSpacing: "0.07em", textTransform: "uppercase", color: COLORS.moss, fontWeight: 600 }}>
         {product.brand ? product.brand : CATEGORIES[product.cat].label}
       </span>
-      <div style={{ marginTop: 6, fontWeight: 700, fontSize: 15 }}>{formatEUR(product.price)} €</div>
+      <div style={{ marginTop: 4, fontWeight: 700, fontSize: 13 }}>{formatEUR(product.price)} €</div>
 
       {product.colors && (
-        <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
           {product.colors.map((c) => (
             <button
               key={c}
@@ -646,8 +646,8 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
                 background: color === c ? COLORS.moss : "transparent",
                 color: color === c ? "#fff" : COLORS.ink,
                 fontWeight: 600,
-                fontSize: 11,
-                padding: "6px 12px",
+                fontSize: 10,
+                padding: "4px 8px",
                 borderRadius: 2,
                 cursor: "pointer",
               }}
@@ -658,7 +658,7 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
         {SIZES.map((s) => (
           <button
             key={s}
@@ -668,9 +668,9 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
               background: size === s ? COLORS.moss : "transparent",
               color: size === s ? "#fff" : COLORS.ink,
               fontWeight: 600,
-              fontSize: 12,
-              padding: "7px 0",
-              width: 38,
+              fontSize: 11,
+              padding: "5px 0",
+              width: 30,
               borderRadius: 2,
               cursor: "pointer",
             }}
@@ -683,17 +683,17 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
       <button
         onClick={handleAdd}
         style={{
-          marginTop: 12,
+          marginTop: 8,
           width: "100%",
           background: added ? COLORS.moss : COLORS.citrus,
           color: added ? "#fff" : COLORS.ink,
           border: "none",
-          padding: "11px 12px",
+          padding: "9px 10px",
           borderRadius: 2,
           fontWeight: 700,
-          fontSize: 13,
+          fontSize: 11,
           textTransform: "uppercase",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.03em",
           cursor: "pointer",
         }}
       >
