@@ -18,7 +18,7 @@ const BODY_FONT = "'Inter', system-ui, sans-serif";
 
 // ====== CONFIG CATÉGORIES ======
 const CATEGORIES = {
-  yoga: { label: "Yoga", subs: ["Sea", "Huly"] },
+  yoga: { label: "Yoga", subs: ["Sea", "Huly", "A"] },
   bikini: { label: "Bikini", subs: ["Casa", "G", "D"] },
   pretaporter: { label: "Prêt-à-porter", subs: ["Ora", "Vela", "Aeli"] },
 };
@@ -32,7 +32,46 @@ const SUB_WEIGHTS = {
   Ora: 350,
   Vela: 350,
   Aeli: 350,
+  A: 300,
 };
+
+// ====== PRODUITS RÉELS "A" (dossier /test/al/...) ======
+const A_BASE_URL = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/al";
+
+// ⚠️ Il manque encore les noms exacts des 5 fichiers "Airbrush Better Together Te..."
+// (coupés dans la capture) — ajoute-les dans ce tableau dès que tu les as.
+const A_PRODUCTS_CONFIG = {
+  "ensemble-bra-jupe-tennis": {
+    folder: "ensemble bra & jupe tennis",
+    sub: "A",
+    price: 60,
+    colors: ["Blanc", "Noir", "Rose", "Bleu"],
+    files: [
+      "Airbrush Better Together Tennis Skirt - Paradise _White--0.jpg",
+      "Airbrush Better Together Tennis Skirt - Paradise black.jpg",
+      "Airbrush Better Together Tennis Skirt - Paradise Pink--0.png",
+      "Airbrush Better Together Tennis Skirt - Paradise Pink_--4.jpg",
+      "Airbrush Better Together Tennis Skirt - Paradise Pink_White--2 copie.jpg",
+      "beu1.JPG",
+      "bleu.JPG",
+      "noir.JPG",
+    ],
+  },
+};
+
+const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => ({
+  id,
+  title: "Ensemble bra & jupe tennis",
+  cat: "yoga",
+  sub: p.sub,
+  price: p.price,
+  colors: p.colors,
+  weightGrams: SUB_WEIGHTS[p.sub],
+  images: p.files.map((f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`),
+  imageUrl: p.files.length
+    ? `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(p.files[0])}`
+    : null,
+}));
 
 const ALL_CATS = Object.keys(CATEGORIES);
 const SIZES = ["S", "M", "L", "XL"];
@@ -125,14 +164,15 @@ function computeShipping(totalWeightGrams) {
   return SHIPPING_BASE + (kg - SHIPPING_BASE_KG) * SHIPPING_PER_EXTRA_KG;
 }
 
-// Génère les produits "factices" (Yoga / Prêt-à-porter uniquement — le Bikini
-// utilise les vrais produits CASA_PRODUCTS définis plus haut)
+// Génère les produits "factices" restants (Yoga / Prêt-à-porter, en attendant
+// leurs vraies photos — Bikini utilise CASA_PRODUCTS, "A" utilise A_PRODUCTS,
+// tous deux définis plus haut avec de vraies photos)
 function generateProducts() {
   const fakeCats = ALL_CATS.filter((c) => c !== "bikini");
-  const fakeProducts = Array.from({ length: 30 }, (_, i) => {
+  const fakeProducts = Array.from({ length: 20 }, (_, i) => {
     const n = String(i + 1).padStart(2, "0");
     const cat = fakeCats[Math.floor(Math.random() * fakeCats.length)];
-    const subs = CATEGORIES[cat].subs;
+    const subs = CATEGORIES[cat].subs.filter((s) => s !== "A" && s !== "Casa");
     const sub = subs[Math.floor(Math.random() * subs.length)];
     const price = Math.floor(Math.random() * (89 - 19 + 1)) + 19;
     return {
@@ -142,17 +182,14 @@ function generateProducts() {
       sub,
       price,
       weightGrams: SUB_WEIGHTS[sub],
-      imageUrl:
-        "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/alo/alo_yoga_" +
-        n +
-        ".jpg",
+      imageUrl: null, // photos à venir
     };
   });
-  return [...CASA_PRODUCTS, ...fakeProducts];
+  return [...CASA_PRODUCTS, ...A_PRODUCTS, ...fakeProducts];
 }
 
-function makeKey(productId, size) {
-  return productId + "::" + size;
+function makeKey(productId, size, color) {
+  return productId + "::" + size + "::" + (color || "-");
 }
 
 function loadCartFromStorage() {
@@ -210,8 +247,8 @@ export default function SportyStoreApp() {
   const shipping = cartEntries.length ? computeShipping(totalWeightGrams) : 0;
   const grandTotal = subtotal + shipping;
 
-  function addToCart(product, size) {
-    const key = makeKey(product.id, size);
+  function addToCart(product, size, color) {
+    const key = makeKey(product.id, size, color);
     setCart((prev) => {
       const next = { ...prev };
       if (next[key]) {
@@ -223,6 +260,7 @@ export default function SportyStoreApp() {
           price: product.price,
           weightGrams: product.weightGrams,
           size,
+          color: color || null,
           qty: 1,
         };
       }
@@ -259,7 +297,7 @@ export default function SportyStoreApp() {
     const lines = ["Bonjour 👋 Je souhaite commander :", ""];
     cartEntries.forEach((it) => {
       lines.push(
-        `- ${it.title} | Taille: ${it.size} | Quantité: ${it.qty} | ${formatEUR(it.price * it.qty)} €`
+        `- ${it.title} | ${it.color ? "Couleur: " + it.color + " | " : ""}Taille: ${it.size} | Quantité: ${it.qty} | ${formatEUR(it.price * it.qty)} €`
       );
     });
     lines.push("");
@@ -496,11 +534,12 @@ function dropdownOptionStyle(active) {
 
 function ProductCard({ product, onAdd, onOpenGallery }) {
   const [size, setSize] = useState(SIZES[0]);
+  const [color, setColor] = useState(product.colors ? product.colors[0] : null);
   const [added, setAdded] = useState(false);
   const hasGallery = product.images && product.images.length > 1;
 
   function handleAdd() {
-    onAdd(product, size);
+    onAdd(product, size, color);
     setAdded(true);
     setTimeout(() => setAdded(false), 900);
   }
@@ -527,6 +566,7 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
             src={product.imageUrl}
             alt={product.title}
             loading="lazy"
+            decoding="async"
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
             onError={(e) => (e.currentTarget.style.display = "none")}
           />
@@ -556,6 +596,29 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
         {product.brand ? product.brand : CATEGORIES[product.cat].label}
       </span>
       <div style={{ marginTop: 6, fontWeight: 700, fontSize: 15 }}>{formatEUR(product.price)} €</div>
+
+      {product.colors && (
+        <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
+          {product.colors.map((c) => (
+            <button
+              key={c}
+              onClick={() => setColor(c)}
+              style={{
+                border: `1px solid ${color === c ? COLORS.moss : "rgba(58,44,51,0.18)"}`,
+                background: color === c ? COLORS.moss : "transparent",
+                color: color === c ? "#fff" : COLORS.ink,
+                fontWeight: 600,
+                fontSize: 11,
+                padding: "6px 12px",
+                borderRadius: 2,
+                cursor: "pointer",
+              }}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 6, marginTop: 12, flexWrap: "wrap" }}>
         {SIZES.map((s) => (
@@ -647,6 +710,7 @@ function ProductGallery({ product, onClose }) {
           <img
             src={product.images[activeIndex]}
             alt={`${product.title} ${activeIndex + 1}`}
+            decoding="async"
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         </div>
@@ -668,7 +732,7 @@ function ProductGallery({ product, onClose }) {
                 background: "#fff",
               }}
             >
-              <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={src} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </button>
           ))}
         </div>
@@ -748,7 +812,7 @@ function Panier({ cartEntries, cart, changeQty, removeItem, clearCart, subtotal,
             <div style={{ minWidth: 200 }}>
               <div style={{ fontFamily: DISPLAY_FONT, fontSize: 20, letterSpacing: "0.03em", marginBottom: 4 }}>{item.title}</div>
               <div style={{ fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", color: COLORS.moss, fontWeight: 600 }}>
-                Taille {item.size} · {formatEUR(item.price)} € / unité
+                {item.color ? `${item.color} · ` : ""}Taille {item.size} · {formatEUR(item.price)} € / unité
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
