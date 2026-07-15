@@ -44,6 +44,7 @@ const A_BASE_URL = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/p
 const A_PRODUCTS_CONFIG = {
   "ensemble-bra-jupe-tennis": {
     folder: "ensemble bra & jupe tennis",
+    title: "Ensemble bra & jupe tennis",
     sub: "A",
     price: 60,
     colorImages: {
@@ -57,20 +58,38 @@ const A_PRODUCTS_CONFIG = {
       Bleu: ["beu1.JPG", "bleu.JPG"],
     },
   },
+  set1: {
+    folder: "set1",
+    title: "Set 1",
+    sub: "A",
+    price: 50,
+    mainImage: "pp.jpg",
+    extraImages: ["all.JPG"],
+    colorImages: {
+      Blanc: ["blanc.JPG"],
+      Bleu: ["bleu.JPG"],
+      Gris: ["gris.JPG"],
+      Noir: ["noir1.JPG"],
+    },
+  },
 };
 
 const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
   const colors = Object.keys(p.colorImages);
+  const buildUrl = (f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`;
   const colorImages = Object.fromEntries(
-    Object.entries(p.colorImages).map(([color, files]) => [
-      color,
-      files.map((f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`),
-    ])
+    Object.entries(p.colorImages).map(([color, files]) => [color, files.map(buildUrl)])
   );
-  const allImages = Object.values(colorImages).flat();
+  const extraImages = (p.extraImages || []).map(buildUrl);
+  const mainImageUrl = p.mainImage ? buildUrl(p.mainImage) : colorImages[colors[0]][0];
+  const allImages = [
+    ...(p.mainImage ? [mainImageUrl] : []),
+    ...extraImages,
+    ...Object.values(colorImages).flat(),
+  ];
   return {
     id,
-    title: "Ensemble bra & jupe tennis",
+    title: p.title,
     cat: "yoga",
     sub: p.sub,
     price: p.price,
@@ -78,7 +97,7 @@ const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
     colorImages,
     weightGrams: SUB_WEIGHTS[p.sub],
     images: allImages,
-    imageUrl: colorImages[colors[0]][0],
+    imageUrl: mainImageUrl,
   };
 });
 
@@ -543,13 +562,13 @@ function dropdownOptionStyle(active) {
 
 function ProductCard({ product, onAdd, onOpenGallery }) {
   const [size, setSize] = useState(SIZES[0]);
-  const [color, setColor] = useState(product.colors ? product.colors[0] : null);
+  const [color, setColor] = useState(null);
   const [added, setAdded] = useState(false);
 
   const displayedImages =
     product.colorImages && color ? product.colorImages[color] : product.images;
   const displayedImageUrl =
-    displayedImages && displayedImages.length ? displayedImages[0] : product.imageUrl;
+    color && displayedImages && displayedImages.length ? displayedImages[0] : product.imageUrl;
   const hasGallery = displayedImages && displayedImages.length > 1;
 
   function handleAdd() {
