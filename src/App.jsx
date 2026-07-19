@@ -18,21 +18,15 @@ const BODY_FONT = "'Inter', system-ui, sans-serif";
 
 // ====== CONFIG CATÉGORIES ======
 const CATEGORIES = {
-  yoga: { label: "Yoga", subs: ["Sea", "Huly", "A"] },
-  bikini: { label: "Bikini", subs: ["Casa", "G", "D"] },
-  pretaporter: { label: "Prêt-à-porter", subs: ["Ora", "Vela", "Aeli"] },
+  yoga: { label: "Yoga", subs: ["al", "gs", "L"] },
+  bikini: { label: "Bikini", subs: ["Casa"] },
+  pretaporter: { label: "Prêt-à-porter", subs: ["ch", "M"] },
 };
 
 const SUB_WEIGHTS = {
-  Sea: 400,
-  Huly: 400,
-  Casa: 150,
-  G: 150,
-  D: 150,
-  Ora: 350,
-  Vela: 350,
-  Aeli: 350,
-  A: 300,
+  yoga: { al: 300, gs: 300, L: 300 },
+  bikini: { Casa: 150 },
+  pretaporter: { ch: 350, M: 350 },
 };
 
 // ====== PRODUITS RÉELS "A" (dossier /test/al/...) ======
@@ -45,7 +39,7 @@ const A_PRODUCTS_CONFIG = {
   "ensemble-bra-jupe-tennis": {
     folder: "ensemble bra & jupe tennis",
     title: "Ensemble bra & jupe tennis",
-    sub: "A",
+    sub: "al",
     price: 60,
     colorImages: {
       Blanc: ["Airbrush Better Together Tennis Skirt - Paradise _White--0.jpg"],
@@ -61,7 +55,7 @@ const A_PRODUCTS_CONFIG = {
   set1: {
     folder: "set1",
     title: "Set 1",
-    sub: "A",
+    sub: "al",
     price: 50,
     mainImage: "pp.jpg",
     extraImages: ["all.JPG"],
@@ -75,7 +69,7 @@ const A_PRODUCTS_CONFIG = {
   set2: {
     folder: "set2",
     title: "Set 2",
-    sub: "A",
+    sub: "al",
     price: 60,
     mainImage: "pp.jpg",
     colorImages: {
@@ -94,7 +88,7 @@ const A_PRODUCTS_CONFIG = {
   set3: {
     folder: "set3",
     title: "Set 3",
-    sub: "A",
+    sub: "al",
     price: 45,
     mainImage: "pp.JPG",
     colorImages: {
@@ -108,7 +102,7 @@ const A_PRODUCTS_CONFIG = {
   set4: {
     folder: "set4",
     title: "Set 4",
-    sub: "A",
+    sub: "al",
     price: 50,
     extraImages: ["all.JPG"],
     colorImages: {
@@ -122,16 +116,77 @@ const A_PRODUCTS_CONFIG = {
   set5: {
     folder: "set5",
     title: "Set 5",
-    sub: "A",
+    sub: "al",
     price: 40,
     colorImages: {
       Rouge: ["rouge.JPG"],
     },
   },
+  set8: {
+    folder: "set8",
+    title: "Set 8",
+    sub: "al",
+    price: 40,
+    colorImages: {
+      Bleu: ["bleu.jpg"],
+      Gris: ["gris.jpg"],
+      Noir: ["noir.jpg"],
+      Vert: ["vert.jpg"],
+    },
+  },
+  alset1: {
+    folder: "alset1",
+    title: "Alset 1",
+    sub: "al",
+    price: 30,
+    mainImage: "pp.jpg",
+    extraImages: ["image_005.jpg"],
+    colorImages: {
+      Blanc: ["blanc.jpg"],
+      Marron: ["marron.jpg"],
+      Noir: ["noir.jpg"],
+    },
+  },
+  alset2: {
+    folder: "alset2",
+    title: "Alset 2",
+    sub: "al",
+    price: 30,
+    colorImages: {
+      Bleu: ["bleu.jpg"],
+      Noir: ["noir.jpg"],
+      Rose: ["rose .jpg"],
+    },
+  },
+  alset3: {
+    folder: "alset3",
+    title: "Alset 3",
+    sub: "al",
+    price: 30,
+    colorImages: {
+      Beige: ["baige.jpg"],
+      Bleu: ["bleu.jpg"],
+      Gris: ["gris.jpg"],
+      Marron: ["marron.jpg"],
+      Noir: ["noir.jpg"],
+    },
+  },
+  alset4: {
+    folder: "alset4",
+    title: "Alset 4",
+    sub: "al",
+    price: 30,
+    colorImages: {
+      Bleu: ["bleu.jpg"],
+      Gris: ["gris.jpg"],
+      Noir: ["noir.jpg"],
+      Rose: ["rose.jpg", "rose2.jpg"],
+    },
+  },
   set6: {
     folder: "set6",
     title: "Set 6",
-    sub: "A",
+    sub: "al",
     price: 40,
     mainImage: "pp.JPG",
     extraImages: ["IMG_3712.JPG"],
@@ -142,30 +197,110 @@ const A_PRODUCTS_CONFIG = {
       Violet: ["violet.JPG"],
     },
   },
+  gsset1: {
+    folder: "gsset1",
+    title: "Gs Set 1",
+    cat: "yoga",
+    sub: "gs",
+    price: 30,
+    colorImages: {
+      Jaune: ["jaune.jpg"],
+      Marron: ["marron.jpg"],
+      Rouge: ["rouge.jpg"],
+    },
+  },
+  luluset1: {
+    folder: "luluset1",
+    title: "L Set 1",
+    cat: "yoga",
+    sub: "L",
+    price: 40,
+    customColorInput: true,
+    files: ["image_001.jpg", "image_002.jpg", "image_003.jpg", "image_004.jpg"],
+  },
+  // luluset2 : prix manquant, en attente
+  chrobe1: {
+    folder: "chrobe1",
+    title: "Ch Robe 1",
+    cat: "pretaporter",
+    sub: "ch",
+    price: 50,
+    mainImage: "crobe1.JPG",
+    files: ["IMG_3842.JPG", "IMG_3843.JPG", "IMG_3848.JPG"],
+  },
+  chrobe2: {
+    folder: "chrobe2",
+    title: "Ch Robe 2",
+    cat: "pretaporter",
+    sub: "ch",
+    price: 50,
+    mainImage: "IMG_3849.JPG",
+    files: ["IMG_3850.JPG", "IMG_3851.JPG", "IMG_3852.JPG"],
+  },
+  miurobe1: {
+    folder: "miurobe1",
+    title: "M Robe 1",
+    cat: "pretaporter",
+    sub: "M",
+    price: 30,
+    files: ["image_001.jpg", "image_002.jpg", "image_003.jpg", "image_004.jpg", "image_005.jpg"],
+  },
+  miuset1: {
+    folder: "miuset1",
+    title: "M Set 1",
+    cat: "pretaporter",
+    sub: "M",
+    price: 30,
+    files: ["image_001.jpg", "image_002.jpg", "image_003.jpg", "image_004.jpg", "image_005.jpg"],
+  },
 };
 
 const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
-  const colors = Object.keys(p.colorImages);
   const buildUrl = (f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`;
-  const colorImages = Object.fromEntries(
-    Object.entries(p.colorImages).map(([color, files]) => [color, files.map(buildUrl)])
-  );
+  const cat = p.cat || "yoga";
   const extraImages = (p.extraImages || []).map(buildUrl);
-  const mainImageUrl = p.mainImage ? buildUrl(p.mainImage) : colorImages[colors[0]][0];
+
+  if (p.colorImages) {
+    const colors = Object.keys(p.colorImages);
+    const colorImages = Object.fromEntries(
+      Object.entries(p.colorImages).map(([color, files]) => [color, files.map(buildUrl)])
+    );
+    const mainImageUrl = p.mainImage ? buildUrl(p.mainImage) : colorImages[colors[0]][0];
+    const allImages = [
+      ...(p.mainImage ? [mainImageUrl] : []),
+      ...extraImages,
+      ...Object.values(colorImages).flat(),
+    ];
+    return {
+      id,
+      title: p.title,
+      cat,
+      sub: p.sub,
+      price: p.price,
+      colors: p.customColorInput ? undefined : colors,
+      customColorInput: p.customColorInput || false,
+      colorImages: p.customColorInput ? undefined : colorImages,
+      weightGrams: SUB_WEIGHTS[cat][p.sub],
+      images: allImages,
+      imageUrl: mainImageUrl,
+    };
+  }
+
+  // Produit "galerie simple", sans sélection de couleur (ex: chrobe1, miurobe1)
+  const files = p.files || [];
+  const mainImageUrl = p.mainImage ? buildUrl(p.mainImage) : buildUrl(files[0]);
   const allImages = [
     ...(p.mainImage ? [mainImageUrl] : []),
-    ...extraImages,
-    ...Object.values(colorImages).flat(),
+    ...files.map(buildUrl),
   ];
   return {
     id,
     title: p.title,
-    cat: "yoga",
+    cat,
     sub: p.sub,
     price: p.price,
-    colors,
-    colorImages,
-    weightGrams: SUB_WEIGHTS[p.sub],
+    customColorInput: p.customColorInput || false,
+    weightGrams: SUB_WEIGHTS[cat][p.sub],
     images: allImages,
     imageUrl: mainImageUrl,
   };
@@ -247,7 +382,7 @@ const CASA_PRODUCTS = Object.entries(CASA_ALBUMS).map(([albumId, album]) => ({
   sub: album.sub,
   brand: "Casa",
   price: album.price,
-  weightGrams: SUB_WEIGHTS[album.sub],
+  weightGrams: SUB_WEIGHTS.bikini[album.sub],
   images: album.files.map((f) => `${CASA_BASE_URL}/${albumId}/${f}`),
   imageUrl: album.files.length ? `${CASA_BASE_URL}/${albumId}/${album.files[0]}` : null,
 }));
@@ -262,28 +397,10 @@ function computeShipping(totalWeightGrams) {
   return SHIPPING_BASE + (kg - SHIPPING_BASE_KG) * SHIPPING_PER_EXTRA_KG;
 }
 
-// Génère les produits "factices" restants (Yoga / Prêt-à-porter, en attendant
-// leurs vraies photos — Bikini utilise CASA_PRODUCTS, "A" utilise A_PRODUCTS,
-// tous deux définis plus haut avec de vraies photos)
+// Renvoie uniquement les vrais produits (photos réelles) — plus de
+// placeholders "Photos à venir"
 function generateProducts() {
-  const fakeCats = ALL_CATS.filter((c) => c !== "bikini");
-  const fakeProducts = Array.from({ length: 20 }, (_, i) => {
-    const n = String(i + 1).padStart(2, "0");
-    const cat = fakeCats[Math.floor(Math.random() * fakeCats.length)];
-    const subs = CATEGORIES[cat].subs.filter((s) => s !== "A" && s !== "Casa");
-    const sub = subs[Math.floor(Math.random() * subs.length)];
-    const price = Math.floor(Math.random() * (89 - 19 + 1)) + 19;
-    return {
-      id: "f" + n,
-      title: sub + " " + n,
-      cat,
-      sub,
-      price,
-      weightGrams: SUB_WEIGHTS[sub],
-      imageUrl: null, // photos à venir
-    };
-  });
-  return [...CASA_PRODUCTS, ...A_PRODUCTS, ...fakeProducts];
+  return [...CASA_PRODUCTS, ...A_PRODUCTS];
 }
 
 function makeKey(productId, size, color) {
@@ -726,6 +843,28 @@ function ProductCard({ product, onAdd, onOpenGallery }) {
             </button>
           ))}
         </div>
+      )}
+
+      {product.customColorInput && (
+        <input
+          type="text"
+          value={color || ""}
+          onChange={(e) => setColor(e.target.value)}
+          placeholder="Couleur souhaitée (ex: rouge, bleu ciel...)"
+          style={{
+            display: "block",
+            width: "100%",
+            marginTop: 8,
+            padding: "7px 8px",
+            fontSize: 11,
+            fontFamily: BODY_FONT,
+            border: "1px solid rgba(58,44,51,0.25)",
+            borderRadius: 2,
+            background: "#fff",
+            color: COLORS.ink,
+            boxSizing: "border-box",
+          }}
+        />
       )}
 
       <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
