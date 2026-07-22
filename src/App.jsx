@@ -30,7 +30,10 @@ const SUB_WEIGHTS = {
 };
 
 // ====== PRODUITS RÉELS "A" (dossier /test/al/...) ======
-const A_BASE_URL = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test/al";
+const SUPABASE_BASE = "https://qhkpehujmkeraupworzb.supabase.co/storage/v1/object/public/test";
+// Chaque produit précise son propre sous-dossier racine ("bucket") via le
+// champ `bucket` — par défaut "al" si non précisé (pour ne pas casser les
+// produits déjà en place).
 
 // ⚠️ J'ai déduit quelle photo correspond à quelle couleur d'après les noms de
 // fichiers ("black" → Noir, "Pink" → Rose, "White" → Blanc, "bleu/beu1" → Bleu).
@@ -198,6 +201,7 @@ const A_PRODUCTS_CONFIG = {
     },
   },
   gsset1: {
+    bucket: "gs",
     folder: "gsset1",
     title: "Gs Set 1",
     cat: "yoga",
@@ -210,6 +214,7 @@ const A_PRODUCTS_CONFIG = {
     },
   },
   luluset1: {
+    bucket: "lulu",
     folder: "luluset1",
     title: "L Set 1",
     cat: "yoga",
@@ -220,7 +225,8 @@ const A_PRODUCTS_CONFIG = {
   },
   // luluset2 : prix manquant, en attente
   chrobe1: {
-    folder: "chrobe1",
+    bucket: "ch",
+    folder: "chrob1",
     title: "Ch Robe 1",
     cat: "pretaporter",
     sub: "ch",
@@ -229,6 +235,7 @@ const A_PRODUCTS_CONFIG = {
     files: ["IMG_3842.JPG", "IMG_3843.JPG", "IMG_3848.JPG"],
   },
   chrobe2: {
+    bucket: "ch",
     folder: "chrobe2",
     title: "Ch Robe 2",
     cat: "pretaporter",
@@ -238,6 +245,7 @@ const A_PRODUCTS_CONFIG = {
     files: ["IMG_3850.JPG", "IMG_3851.JPG", "IMG_3852.JPG"],
   },
   miurobe1: {
+    bucket: "Miu",
     folder: "miurobe1",
     title: "M Robe 1",
     cat: "pretaporter",
@@ -246,6 +254,7 @@ const A_PRODUCTS_CONFIG = {
     files: ["image_001.jpg", "image_002.jpg", "image_003.jpg", "image_004.jpg", "image_005.jpg"],
   },
   miuset1: {
+    bucket: "Miu",
     folder: "miuset1",
     title: "M Set 1",
     cat: "pretaporter",
@@ -256,7 +265,7 @@ const A_PRODUCTS_CONFIG = {
 };
 
 const A_PRODUCTS = Object.entries(A_PRODUCTS_CONFIG).map(([id, p]) => {
-  const buildUrl = (f) => `${A_BASE_URL}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`;
+  const buildUrl = (f) => `${SUPABASE_BASE}/${p.bucket || "al"}/${encodeURIComponent(p.folder)}/${encodeURIComponent(f)}`;
   const cat = p.cat || "yoga";
   const extraImages = (p.extraImages || []).map(buildUrl);
 
