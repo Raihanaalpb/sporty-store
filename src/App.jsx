@@ -504,6 +504,7 @@ export default function SportyStoreApp() {
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      if (activeCat === "all" && p.cat === "bikini") return false; // Bikini masqué tant qu'on ne clique pas dessus
       const mc = activeCat === "all" || p.cat === activeCat;
       const ms = activeSub === "all" || p.sub === activeSub;
       return mc && ms;
