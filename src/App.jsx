@@ -651,7 +651,7 @@ function Catalogue({ products, allProducts, activeCat, activeSub, setActiveCat, 
   const navRef = useRef(null);
 
   const bestSellers = useMemo(
-    () => (allProducts || []).filter((p) => /set\s*1|set\s*2/i.test(p.title)),
+    () => (allProducts || []).filter((p) => p.cat !== "bikini" && /set\s*1|set\s*2/i.test(p.title)),
     [allProducts]
   );
 
