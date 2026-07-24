@@ -200,6 +200,33 @@ const A_PRODUCTS_CONFIG = {
       Violet: ["violet.JPG"],
     },
   },
+  alshort1: {
+    folder: "alshort1",
+    title: "Al Short 1",
+    sub: "al",
+    price: 15,
+    mainImage: "pp.jpg",
+    colorImages: {
+      Blanc: ["blanc.jpg"],
+      Bleu: ["bleu.webp"],
+      Brun: ["brun.webp"],
+      Noir: ["noir.jpg"],
+      Rose: ["rose.webp"],
+    },
+  },
+  alset5: {
+    folder: "alset5",
+    title: "Al Set 5",
+    sub: "al",
+    price: 40,
+    colorImages: {
+      Beige: ["beige.jpg"],
+      Blanc: ["blanc.jpg"],
+      Jaune: ["jaune.jpg"],
+      Marron: ["marron.jpg"],
+      Vert: ["vert.jpg"],
+    },
+  },
   gsset1: {
     bucket: "gs",
     folder: "gsset1",
@@ -591,6 +618,7 @@ export default function SportyStoreApp() {
       {view === "catalogue" ? (
         <Catalogue
           products={filtered}
+          allProducts={products}
           activeCat={activeCat}
           activeSub={activeSub}
           setActiveCat={setActiveCat}
@@ -617,10 +645,15 @@ export default function SportyStoreApp() {
 }
 
 // ====== Navigation catégories façon menu déroulant (comme le site) ======
-function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub, addToCart }) {
+function Catalogue({ products, allProducts, activeCat, activeSub, setActiveCat, setActiveSub, addToCart }) {
   const [openCat, setOpenCat] = useState(null);
   const [galleryProduct, setGalleryProduct] = useState(null);
   const navRef = useRef(null);
+
+  const bestSellers = useMemo(
+    () => (allProducts || []).filter((p) => /set\s*1|set\s*2/i.test(p.title)),
+    [allProducts]
+  );
 
   useEffect(() => {
     function handleOutsideClick(e) {
@@ -654,6 +687,19 @@ function Catalogue({ products, activeCat, activeSub, setActiveCat, setActiveSub,
           Choisis une taille, ajoute au panier, on prépare la commande sur WhatsApp — simple et rapide.
         </p>
       </div>
+
+      {bestSellers.length > 0 && (
+        <div style={{ marginBottom: 32 }}>
+          <h3 style={{ fontFamily: DISPLAY_FONT, fontSize: 18, letterSpacing: "0.03em", margin: "0 0 12px", color: COLORS.ink }}>
+            ★ Meilleures ventes
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14 }}>
+            {bestSellers.map((p) => (
+              <ProductCard key={"bs-" + p.id} product={p} onAdd={addToCart} onOpenGallery={setGalleryProduct} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ marginBottom: 26, position: "relative" }} ref={navRef}>
         <div style={{ display: "flex", gap: 4, borderBottom: "1px solid rgba(58,44,51,0.14)", flexWrap: "wrap" }}>
