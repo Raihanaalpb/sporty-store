@@ -213,6 +213,34 @@ const A_PRODUCTS_CONFIG = {
       Rouge: ["rouge.jpg"],
     },
   },
+  gsset2: {
+    bucket: "gs",
+    folder: "gsset2",
+    title: "Gs Set 2",
+    cat: "yoga",
+    sub: "gs",
+    price: 35,
+    colorImages: {
+      Brun: ["brun.jpg"],
+      Gris: ["gris.jpg"],
+      Noir: ["noir.jpg"],
+    },
+  },
+  gsset3: {
+    bucket: "gs",
+    folder: "gsset3",
+    title: "Gs Set 3",
+    cat: "yoga",
+    sub: "gs",
+    price: 35,
+    mainImage: "pp.jpg",
+    colorImages: {
+      Bleu: ["bleu.jpg"],
+      Brun: ["brun.jpg"],
+      Noir: ["noir.jpg"],
+      Violet: ["violet.jpg"],
+    },
+  },
   luluset1: {
     bucket: "lulu",
     folder: "luluset1",
@@ -223,7 +251,7 @@ const A_PRODUCTS_CONFIG = {
     customColorInput: true,
     files: ["image_001.jpg", "image_002.jpg", "image_003.jpg", "image_004.jpg"],
   },
-  // luluset2 : prix manquant, en attente
+  // luluset2 : prix confirmé (35€) mais photos toujours manquantes, en attente
   chrobe1: {
     bucket: "ch",
     folder: "chrob1",
